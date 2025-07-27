@@ -19,7 +19,7 @@ const ServiceCard = () => {
         <span className="text-sm text-gray-500">Kertas Tersisa</span>
         <span className="text-lg font-bold text-emerald-400">10</span>
       </div>
-      <div className="flex flex-col items-center mx-5 bg-emerald-100 rounded-lg p-3">
+      <div className="flex flex-col items-center mx-5 bg-emerald-100/50 text-gray-700 rounded-lg p-3">
         <div className="flex justify-between items-center p-2 w-full">
           <div className="flex items-center">
             <HiDocumentMinus />
