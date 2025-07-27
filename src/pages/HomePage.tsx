@@ -3,9 +3,17 @@ import StockCard from "../components/StockCard";
 import Button from "../components/Button";
 import background from "../assets/bg.jpg";
 import { HiOutlineArrowSmallRight } from "react-icons/hi2";
-import { Link } from "react-router";
 
-const HomePage = () => {
+type HomePageProps = {
+  services: {
+    serviceId: string;
+    serviceName: string;
+    remainingStock: number;
+  }[];
+};
+
+const HomePage = (props: HomePageProps) => {
+  const { services } = props;
   return (
     <div className="relative flex flex-col items-center">
       {/* Background Image */}
@@ -45,21 +53,23 @@ const HomePage = () => {
           <h3 className="text-3xl underline relative font-bold text-center mt-20 mb-10">
             Infomation
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-            <StockCard />
-            <StockCard />
-            <StockCard />
-            <StockCard />
+          <div className="flex flex-wrap justify-center gap-10">
+            {services.map((service) => (
+              <StockCard
+                key={service.serviceId}
+                productName={service.serviceName}
+                stockCount={service.remainingStock}
+              />
+            ))}
           </div>
         </div>
         <div className="mt-20">
-          <Link to="/services">
             <Button
               icon={<HiOutlineArrowSmallRight />} // Replace with an actual icon component
               text="Let's Print It!"
+              toDestination="/services"
               className="font-semibold text-2xl px-8 py-2"
             />
-          </Link>
         </div>
       </div>
     </div>
