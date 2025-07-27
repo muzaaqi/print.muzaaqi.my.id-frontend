@@ -18,7 +18,7 @@ const services = [
     serviceId: "a5-paper",
     serviceName: "Kertas A5",
     imageUrl: "https://imgur.com/UJ4ReCC.png",
-    remainingStock: 15,
+    remainingStock: 9,
     priceOneSide: 600,
     priceTwoSides: 1000,
     priceOneColor: 1200,

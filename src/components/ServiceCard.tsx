@@ -12,12 +12,29 @@ type ServiceCardProps = {
   priceTwoSides: number;
   priceOneColor: number;
   priceColorTwoSides: number;
-}
+  colorSet: {
+    card: string;
+    text: string;
+    type: string;
+    btn: string;
+  };
+};
 
 const ServiceCard = (props: ServiceCardProps) => {
-  const { serviceName, serviceSlug, imageUrl, remainingStock, priceOneSide, priceTwoSides, priceOneColor, priceColorTwoSides } = props;
+  const {
+    serviceName,
+    serviceSlug,
+    imageUrl,
+    remainingStock,
+    priceOneSide,
+    priceTwoSides,
+    priceOneColor,
+    priceColorTwoSides,
+    colorSet,
+  } = props;
+  
   return (
-    <div className="border-2 bg-white border-emerald-400 rounded-lg shadow-md h-[69vh] shadow-emerald-400/50 hover:shadow-lg hover:scale-105 transition-all duration-300">
+    <div className={`border-2 bg-white rounded-lg pb-2 shadow-md items-center ${colorSet.card} hover:shadow-lg hover:scale-105 transition-all duration-300`}>
       <div className="flex justify-center items-center p-4">
         <img
           src={`${imageUrl}`}
@@ -26,15 +43,15 @@ const ServiceCard = (props: ServiceCardProps) => {
         />
       </div>
       <div className=" justify-center items-center flex flex-col">
-        <h2 className="text-2xl font-bold text-emerald-400">{serviceName}</h2>
+        <h2 className={`text-2xl font-bold ${colorSet.text}`}>{serviceName}</h2>
       </div>
       <div className="flex flex-col items-center p-3">
-        <span className="text-sm text-gray-500">Kertas Tersisa</span>
-        <span className="text-lg font-bold text-red-400 px-2 py-1 justify-self-center rounded-lg mt-1 hover:scale-110 transition-all duration-300 cursor-pointer">
+        <span className="text-sm font-medium text-gray-500">Kertas Tersisa</span>
+        <span className={`text-lg font-bold ${colorSet.text} px-2 py-1 justify-self-center rounded-lg mt-1 hover:scale-110 transition-all duration-300 cursor-pointer`}>
           {remainingStock} Lembar
         </span>
       </div>
-      <div className="flex flex-col items-center mx-5 bg-emerald-100/50 text-gray-700 rounded-lg p-3">
+      <div className={`flex flex-col items-center min-w-[318px] mx-5 text-gray-700 rounded-lg p-3 ${colorSet.type}`}>
         <div className="flex justify-between items-center p-2 w-full hover:scale-105 transition-all duration-300 cursor-pointer">
           <div className="flex items-center">
             <HiDocumentMinus />
@@ -81,7 +98,7 @@ const ServiceCard = (props: ServiceCardProps) => {
           icon={<HiArrowTopRightOnSquare />}
           text="Checkout"
           toDestination={`/checkout/${serviceSlug}`}
-          className="text-white rounded-full px-6 py-2"
+          className={`text-white rounded-full px-6 py-2 ${colorSet.btn}`}
         />
       </div>
     </div>
