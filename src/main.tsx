@@ -8,8 +8,8 @@ import Header from "./components/Header.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <div className="container mx-auto max-w-7xl px-4">
-      <Header />
       <BrowserRouter>
+        <Header />
         <App />
       </BrowserRouter>
     </div>

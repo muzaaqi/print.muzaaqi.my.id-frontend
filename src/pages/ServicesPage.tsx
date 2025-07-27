@@ -7,12 +7,9 @@ const ServicesPage = () => {
       <p className="text-lg text-center mt-5">
         We offer a variety of printing services to meet your needs.
       </p>
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20">
-        {/* Service Card 1 */}
+      <div className="mt-10 mb-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20">
         <ServiceCard />
-        {/* Service Card 2 */}
         <ServiceCard />
-        {/* Service Card 3 */}
         <ServiceCard />
       </div>
     </div>

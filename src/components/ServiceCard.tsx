@@ -1,59 +1,75 @@
 import Button from "./Button";
 import { HiArrowTopRightOnSquare } from "react-icons/hi2";
 import { HiDocumentMinus } from "react-icons/hi2";
+import { HiDocumentText } from "react-icons/hi2";
+import paperB5 from "../assets/paper-b5.png";
 
 const ServiceCard = () => {
   return (
-    <div className="border-2 border-emerald-400 rounded-lg shadow-md h-[65vh] shadow-emerald-400/50 hover:shadow-lg hover:scale-105 transition-all duration-300">
-      <div>
+    <div className="border-2 bg-white border-emerald-400 rounded-lg shadow-md h-[69vh] shadow-emerald-400/50 hover:shadow-lg hover:scale-105 transition-all duration-300">
+      <div className="flex justify-center items-center p-4">
         <img
-          src="https://www.rainbow-creations.co.uk/images/user/18-100620184837.jpg"
+          src={paperB5}
           alt="Service"
-          className="w-full h-64 object-cover rounded-md mb-2"
+          className=" h-64 object-cover rounded-md mb-2 hover:scale-110 transition-all duration-500 cursor-pointer"
         />
       </div>
       <div className=" justify-center items-center flex flex-col">
-        <h2 className="text-xl font-semibold">Service 1</h2>
+        <h2 className="text-2xl font-bold text-emerald-400">Kertas B5</h2>
       </div>
-      <div className="flex flex-col items-center p-4">
+      <div className="flex flex-col items-center p-3">
         <span className="text-sm text-gray-500">Kertas Tersisa</span>
-        <span className="text-lg font-bold text-emerald-400">10</span>
+        <span className="text-lg font-bold text-red-400 px-2 py-1 justify-self-center rounded-lg mt-1 hover:scale-110 transition-all duration-300 cursor-pointer">
+          10 Lembar
+        </span>
       </div>
       <div className="flex flex-col items-center mx-5 bg-emerald-100/50 text-gray-700 rounded-lg p-3">
-        <div className="flex justify-between items-center p-2 w-full">
+        <div className="flex justify-between items-center p-2 w-full hover:scale-105 transition-all duration-300 cursor-pointer">
           <div className="flex items-center">
             <HiDocumentMinus />
             <span className="ml-2 text-sm">B&W</span>
           </div>
-          <span className="ml-2 text-sm">Rp.600,00/lbr</span>
+          <span className="ml-2 text-sm hover:text-emerald-600 hover:scale-110 transition-all duration-300 cursor-pointer">
+            Rp.600,00/lbr
+          </span>
         </div>
-        <div className="flex justify-between items-center p-2 w-full">
+        <div className="flex justify-between items-center p-2 w-full hover:scale-105 transition-all duration-300 cursor-pointer">
           <div className="flex items-center">
-            <HiDocumentMinus />
+            <HiDocumentText />
             <span className="ml-2 text-sm"> B&W Dua Sisi</span>
           </div>
-          <span className="ml-2 text-sm">Rp.600,00/lbr</span>
+          <span className="ml-2 text-sm hover:text-emerald-600 hover:scale-110 transition-all duration-300 cursor-pointer">
+            Rp.600,00/lbr
+          </span>
         </div>
-        <div className="flex justify-between items-center p-2 w-full">
+        <div className="flex justify-between items-center p-2 w-full hover:scale-105 transition-all duration-300 cursor-pointer">
           <div className="flex items-center">
             <HiDocumentMinus />
-            <span className="ml-2 text-sm">Warna </span>
+            <span className="ml-2 text-sm hover:bg-gradient-to-r from-green-500 to-cyan-400 bg-clip-text hover:text-transparent transition-all duration-500">
+              Warna{" "}
+            </span>
           </div>
-          <span className="ml-2 text-sm">Rp.600,00/lbr</span>
+          <span className="ml-2 text-sm hover:text-emerald-600 hover:scale-110 transition-all duration-300 cursor-pointer">
+            Rp.600,00/lbr
+          </span>
         </div>
-        <div className="flex justify-between items-center p-2 w-full">
+        <div className="flex justify-between items-center p-2 w-full hover:scale-105 transition-all duration-300 cursor-pointer">
           <div className="flex items-center">
-            <HiDocumentMinus />
-            <span className="ml-2 text-sm">Warna Dua Sisi</span>
+            <HiDocumentText />
+            <span className="ml-2 text-sm hover:bg-gradient-to-r from-green-500 to-cyan-400 bg-clip-text hover:text-transparent transition-all duration-500">
+              Warna Dua Sisi
+            </span>
           </div>
-          <span className="ml-2 text-sm">Rp.600,00/lbr</span>
+          <span className="ml-2 text-sm hover:text-emerald-600 hover:scale-110 transition-all duration-300 cursor-pointer">
+            Rp.600,00/lbr
+          </span>
         </div>
       </div>
       <div className="p-4 mt-2 flex justify-center">
         <Button
           icon={<HiArrowTopRightOnSquare />}
           text="Checkout"
-          className=" text-white rounded-full px-6 py-2 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
+          className="text-white rounded-full px-6 py-2"
         />
       </div>
     </div>
