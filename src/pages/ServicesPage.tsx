@@ -24,8 +24,8 @@ const ServicesPage = (props: ServicesPageProps) => {
         {services.map((service) => (
           <ServiceCard
             key={service.serviceId}
+            serviceId={service.serviceId}
             serviceName={service.serviceName}
-            serviceSlug={service.serviceName.toLowerCase().replace(/\s+/g, "-")}
             imageUrl={service.imageUrl}
             remainingStock={service.remainingStock}
             priceOneSide={service.priceOneSide}

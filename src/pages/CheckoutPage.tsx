@@ -1,24 +1,23 @@
+import CheckoutForm from "../components/CheckoutForm";
 
 const CheckoutPage = () => {
   return (
-    <div>
-      <div className="p-5">
+    <div className="min-h-screen md:px-15">
+      {/* <div className="p-5">
         <h1 className="text-4xl font-bold text-center mt-10">Checkout</h1>
-        <p className="text-lg text-center mt-5">Please review your order details below.</p>
-      </div>
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-20">
-        <div className="w-full h-[60vh] p-5 border-2 border-emerald-400 shadow-emerald-400/50 hover:shadow-lg rounded-lg shadow-md">
-          <form>
-            <label htmlFor="name">Name:</label>
-            <input id="name" type="text" className="border border-gray-300 focus:ring-emerald-400 focus:border-emerald-400 rounded-md p-2 w-full" />
-          </form>
-        </div>
-        <div className="mt-10 flex justify-center">
-
+        <p className="text-lg text-center mt-5">
+          Please review your order details below.
+        </p>
+      </div> */}
+      <div className="mt-10 flex bg-emerald-200/50 rounded-lg shadow-emerald-400/50 shadow-lg">
+        <CheckoutForm/>
+        <div className="w-1/2 justify-center py-20 px-15 xl:px-30 hidden lg:flex">
+          <div className="w-full p-5 border-3 bg-white border-emerald-400 rounded-lg shadow-md">
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CheckoutPage
+export default CheckoutPage;

@@ -89,6 +89,7 @@ const HomePage = (props: HomePageProps) => {
           <Button
             icon={<HiOutlineArrowSmallRight />} // Replace with an actual icon component
             text="Let's Print It!"
+            type="button"
             toDestination="/services"
             className="bg-emerald-400 shadow-emerald-400/50 hover:bg-emerald-500 font-semibold text-2xl px-8 py-2"
           />

@@ -4,15 +4,17 @@ import { Link } from "react-router";
 type ButtonProps = {
   icon: ReactNode;
   text: string;
-  toDestination: string;
+  toDestination?: string;
   className?: string;
+  type: "button" | "submit" | "reset";
 }
 
 const Button = (props: ButtonProps) => {
   return (
     <div>
       <Link to={`${props.toDestination}`} className="block">
-        <button
+        <button 
+          type={props.type}
           className={`text-white flex py-3 justify-center items-center rounded-full cursor-pointer shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ${props.className}`}
         >
           <span>{props.text}</span>

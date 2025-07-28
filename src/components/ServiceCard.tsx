@@ -4,8 +4,8 @@ import { HiDocumentMinus } from "react-icons/hi2";
 import { HiDocumentText } from "react-icons/hi2";
 
 type ServiceCardProps = {
+  serviceId: string;
   serviceName: string;
-  serviceSlug: string;
   imageUrl: string;
   remainingStock: number;
   priceOneSide: number;
@@ -23,7 +23,7 @@ type ServiceCardProps = {
 const ServiceCard = (props: ServiceCardProps) => {
   const {
     serviceName,
-    serviceSlug,
+    serviceId,
     imageUrl,
     remainingStock,
     priceOneSide,
@@ -97,7 +97,8 @@ const ServiceCard = (props: ServiceCardProps) => {
         <Button
           icon={<HiArrowTopRightOnSquare />}
           text="Checkout"
-          toDestination={`/checkout/${serviceSlug}`}
+          type="button"
+          toDestination={`/checkout/${serviceId}`}
           className={`text-white rounded-full px-6 py-2 ${colorSet.btn}`}
         />
       </div>
