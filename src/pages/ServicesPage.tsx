@@ -2,13 +2,13 @@ import ServiceCard from "../components/ServiceCard";
 
 type ServicesPageProps = {
   services: {
-    serviceId: string;
+    id: string;
     serviceName: string;
     imageUrl: string;
     remainingStock: number;
     priceOneSide: number;
     priceTwoSides: number;
-    priceOneColor: number;
+    priceColorOneSide: number;
     priceColorTwoSides: number;
   }[];
 };
@@ -23,14 +23,14 @@ const ServicesPage = (props: ServicesPageProps) => {
       <div className="mt-10 flex flex-wrap justify-center gap-20">
         {services.map((service) => (
           <ServiceCard
-            key={service.serviceId}
-            serviceId={service.serviceId}
+            key={service.id}
+            id={service.id}
             serviceName={service.serviceName}
             imageUrl={service.imageUrl}
             remainingStock={service.remainingStock}
             priceOneSide={service.priceOneSide}
             priceTwoSides={service.priceTwoSides}
-            priceOneColor={service.priceOneColor}
+            priceColorOneSide={service.priceColorOneSide}
             priceColorTwoSides={service.priceColorTwoSides}
             colorSet={{
               card: service.remainingStock < 10

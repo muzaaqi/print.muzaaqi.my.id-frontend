@@ -6,7 +6,7 @@ import { HiOutlineArrowSmallRight } from "react-icons/hi2";
 
 type HomePageProps = {
   services: {
-    serviceId: string;
+    id: string;
     serviceName: string;
     remainingStock: number;
   }[];
@@ -56,7 +56,7 @@ const HomePage = (props: HomePageProps) => {
           <div className="flex flex-wrap justify-center gap-10">
             {services.map((service) => (
               <StockCard
-                key={service.serviceId}
+                key={service.id}
                 productName={service.serviceName}
                 stockCount={service.remainingStock}
                 colorSet={{

@@ -3,8 +3,24 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import axios from "axios";
 import { useParams } from "react-router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import AxiosInstance from "../lib/AxiosInstance";
+import AlertModal from "./AlertModal";
 // import { HiMiniWallet } from "react-icons/hi2";
+
+type Service = {
+  id: string;
+  serviceName: string;
+  remainingStock: number;
+  priceOneSide: number;
+  priceColorOneSide: number;
+  priceTwoSides: number;
+  priceColorTwoSides: number;
+};
+
+type CheckoutFormProps = {
+  onPaymentReady: (snapToken: string) => void;
+};
 
 const ACCEPTED_MIME_TYPES = [
   "application/pdf",
@@ -34,64 +50,175 @@ const checkoutSchema = z.object({
 
 type CheckoutSchema = z.infer<typeof checkoutSchema>;
 
-const CheckoutForm = () => {
-  
-  const [ totalPrice, setTotalPrice ] = useState(0);
-  const [ basePrice, setBasePrice ] = useState(0);
+const getServiceById = async (id: string) => {
+  const response = await AxiosInstance.get(`/services/${id}`);
+  return response.data;
+};
+
+const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { serviceId } = useParams<{ serviceId: string }>();
+  const [service, setService] = useState<Service | null>(null);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [basePrice, setBasePrice] = useState(0);
+  
 
   const form = useForm<CheckoutSchema>({
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = form.handleSubmit((values) => {
-    const submitData = {
-      ...values,
-      serviceId: serviceId,
-      totalPrice: totalPrice,
-      paymentStatus: "pending", // Assuming you want to set a default payment status
+  // Fetch service once
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        if (!serviceId) return;
+        const data = await getServiceById(serviceId);
+        setService(data);
+      } catch (err) {
+        console.error("Failed to fetch service:", err);
+      }
     };
-    console.log("Submitting data:", submitData);
-  });
+    if (serviceId) fetchService();
+  }, [serviceId]);
 
-  const PRICE_MAP = {
-    "one-side": {
-      "black-and-white": 500,
-      color: 750,
-    },
-    "two-sides": {
-      "black-and-white": 650,
-      color: 1000,
-    },
-  } as const;
+  // File upload handlers
+  const handleFileSelect = (file: File) => {
+    setUploadedFile(file);
+    // Create a FileList-like object
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    form.setValue("file", dt.files);
+    form.clearErrors("file");
+  };
 
-  const calcTotalPrice = (value: CheckoutSchema) => {
-    const { pageQuantity, type, color } = value;
-    const basePrice = PRICE_MAP[type]?.[color];
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
 
-    if (!basePrice || !pageQuantity) {
-      setTotalPrice(0);
-      setBasePrice(0);
-      return;
-    }
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
 
-    // Hitung jumlah lembar yang dibutuhkan
-    const actualSheets =
-      type === "two-sides"
-        ? Math.ceil(pageQuantity / 2) // Pembulatan ke atas
-        : pageQuantity;
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
 
-    const totalPrice = basePrice * actualSheets;
-
-    if (!isNaN(totalPrice)) {
-      setBasePrice(basePrice); // Harga per lembar
-      setTotalPrice(totalPrice); // Total harga
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      const file = files[0];
+      if (ACCEPTED_MIME_TYPES.includes(file.type)) {
+        handleFileSelect(file);
+      } else {
+        form.setError("file", {
+          message:
+            "Format file tidak valid. Hanya PDF, DOC, DOCX, PNG, JPG, atau JPEG.",
+        });
+      }
     }
   };
-  form.watch((value) => {
-    calcTotalPrice(value as CheckoutSchema);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  // Hitung harga setiap form berubah
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (!service) return;
+
+      const PRICE_MAP = {
+        "one-side": {
+          "black-and-white": service.priceOneSide,
+          color: service.priceColorOneSide,
+        },
+        "two-sides": {
+          "black-and-white": service.priceTwoSides,
+          color: service.priceColorTwoSides,
+        },
+      } as const;
+
+      const { pageQuantity, type, color } = value;
+      if (!type || !color) return;
+
+      const base = PRICE_MAP[type]?.[color];
+
+      if (!base || !pageQuantity) {
+        setBasePrice(0);
+        setTotalPrice(0);
+        return;
+      }
+
+      const sheets =
+        type === "two-sides" ? Math.ceil(pageQuantity / 2) : pageQuantity;
+
+      const total = base * sheets;
+
+      setBasePrice(base);
+      setTotalPrice(total);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, service]);
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    if (!service) return;
+
+    const formData = new FormData();
+
+    formData.append("name", values.name);
+    formData.append("phone", values.phone);
+    formData.append("file", values.file[0]); // file wajib [0]
+    formData.append("pageQuantity", values.pageQuantity.toString());
+    formData.append("type", values.type);
+    formData.append("color", values.color);
+    if (values.note) formData.append("note", values.note);
+    formData.append("serviceId", service.id);
+    formData.append("totalPrice", totalPrice.toString());
+    formData.append("paymentStatus", "pending");
+
+    setIsLoading(true);
+
+    try {
+      const res = await AxiosInstance.post("/transaction", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const snapToken = res.data.snapToken;
+      onPaymentReady(snapToken);
+
+      // Reset form dan semua state terkait file
+      form.reset();
+      setUploadedFile(null);
+      setTotalPrice(0);
+      setBasePrice(0);
+
+      // Reset hidden file input juga
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setIsLoading(false);
+      AlertModal();
+    }
   });
-  
+
+  if (!service) return <p>Loading service...</p>;
   return (
     <div className="w-full lg:w-1/2 p-5 border-3 bg-white border-emerald-400 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-center mb-4">Checkout Form</h2>
@@ -136,11 +263,106 @@ const CheckoutForm = () => {
         <label htmlFor="upload-file" className="mt-4 block font-semibold">
           Upload File:
         </label>
+
+        {/* Drag and Drop Area */}
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleClick}
+          className={`
+            border-2 border-dashed rounded-lg p-8 mt-2 cursor-pointer transition-all duration-200
+            ${
+              isDragOver
+                ? "border-emerald-400 bg-emerald-50"
+                : "border-gray-300 hover:border-emerald-400 hover:bg-gray-50"
+            }
+            ${form.formState.errors.file ? "border-red-400 bg-red-50" : ""}
+          `}
+        >
+          <div className="text-center">
+            {uploadedFile ? (
+              <div className="space-y-2">
+                <div className="text-emerald-600">
+                  <svg
+                    className="mx-auto h-12 w-12"
+                    fill="currentColor"
+                    viewBox="0 0 48 48"
+                  >
+                    <path d="M28 8H12a4 4 0 00-4 4v24a4 4 0 004 4h24a4 4 0 004-4V20L28 8z" />
+                    <path d="M28 8v12h12" />
+                  </svg>
+                </div>
+                <p className="text-sm font-medium text-gray-900">
+                  {uploadedFile.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setUploadedFile(null);
+                    const dt = new DataTransfer();
+                    form.setValue("file", dt.files);
+                  }}
+                  className="text-xs text-red-600 hover:text-red-800 underline"
+                >
+                  Remove file
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="text-gray-400">
+                  <svg
+                    className="mx-auto h-12 w-12"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                  >
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v24a4 4 0 004 4h24a4 4 0 004-4V20L28 8z"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <polyline
+                      points="16,13 6,1 6,3"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <polyline
+                      points="30,13 40,1 40,3"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    <span className="text-emerald-600">Click to upload</span> or
+                    drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF, DOC, DOCX, PNG, JPG or JPEG
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Hidden file input */}
         <input
+          ref={fileInputRef}
           id="upload-file"
           type="file"
-          className="border border-gray-300 focus:ring-emerald-400 focus:border-emerald-400 rounded-md p-2 w-full mt-2"
-          {...form.register("file", { required: true })}
+          className="hidden"
+          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+          onChange={handleFileInputChange}
         />
 
         {form.formState.errors.file && (
@@ -234,7 +456,7 @@ const CheckoutForm = () => {
           type="submit"
           className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-lg font-medium transition-colors"
         >
-          Pay Now!
+          {isLoading ? "Processing..." : "Checkout"}
         </button>
       </form>
     </div>
