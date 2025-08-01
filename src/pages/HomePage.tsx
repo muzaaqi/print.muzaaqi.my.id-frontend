@@ -27,13 +27,13 @@ const HomePage = (props: HomePageProps) => {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center pb-10">
-        <div className="text-sm font-semibold mt-40 bg-emerald-400 text-white px-4 py-2 rounded-full">
+        <div className="text-sm font-semibold mt-10 lg:mt-40 bg-emerald-400 text-white px-4 py-2 rounded-full">
           <p className="tracking-widest">PRINT.MUZAAQI.MY.ID</p>
         </div>
-        <div className="mt-5">
+        <div className="mt-3 lg:mt-5">
           <SplitText
             text="Solusi Males Ngeprint Keluar!"
-            className="text-7xl font-semibold text-center"
+            className="text-5xl lg:text-7xl font-semibold text-center"
             delay={100}
             duration={0.6}
             ease="power3.out"
@@ -45,12 +45,12 @@ const HomePage = (props: HomePageProps) => {
             textAlign="center"
             // onLetterAnimationComplete={handleAnimationComplete}
           />
-          <p className="text-lg font-semibold text-center mt-2">
+          <p className="text-lg font-semibold text-center mt-1 lg:mt-2">
             MUDAH - CEPAT - EFISIEN
           </p>
         </div>
         <div>
-          <h3 className="text-3xl underline relative font-bold text-center mt-20 mb-10">
+          <h3 className="text-3xl underline relative font-bold text-center mt-10 lg:mt-20 mb-10">
             Infomations
           </h3>
           <div className="flex flex-wrap justify-center gap-10">

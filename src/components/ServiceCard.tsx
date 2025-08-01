@@ -21,7 +21,6 @@ type ServiceCardProps = {
 };
 
 const ServiceCard = (props: ServiceCardProps) => {
-
   const {
     serviceName,
     id,
@@ -33,7 +32,7 @@ const ServiceCard = (props: ServiceCardProps) => {
     priceColorTwoSides,
     colorSet,
   } = props;
-  
+
   return (
     <div
       className={`border-2 bg-white rounded-lg pb-2 shadow-md items-center ${colorSet.card} hover:shadow-lg hover:scale-105 transition-all duration-300`}
@@ -107,8 +106,10 @@ const ServiceCard = (props: ServiceCardProps) => {
           icon={<HiArrowTopRightOnSquare />}
           text="Checkout"
           type="button"
-          toDestination={`${remainingStock > 0 ? `/checkout/${id}` : '#'}`}
-          className={`text-white rounded-full px-6 py-2 ${colorSet.btn} ${remainingStock <= 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+          toDestination={`${remainingStock > 0 ? `/${id}/checkout` : "#"}`}
+          className={`text-white rounded-full px-6 py-2 ${colorSet.btn} ${
+            remainingStock <= 0 ? "cursor-not-allowed opacity-50" : ""
+          }`}
         />
       </div>
     </div>

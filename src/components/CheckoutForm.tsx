@@ -1,12 +1,10 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import axios from "axios";
 import { useParams } from "react-router";
 import { useState, useEffect, useRef } from "react";
 import AxiosInstance from "../lib/AxiosInstance";
-import AlertModal from "./AlertModal";
-// import { HiMiniWallet } from "react-icons/hi2";
+import Loading from "./ui/Loading";
 
 type Service = {
   id: string;
@@ -19,7 +17,18 @@ type Service = {
 };
 
 type CheckoutFormProps = {
-  onPaymentReady: (snapToken: string) => void;
+  onTransactionCreated: (transaction: {
+    id: string;
+    name: string;
+    phone: string;
+    service?: {
+      serviceName: string;
+    };
+    pageQuantity: number;
+    type: string;
+    color: string;
+    totalPrice: number;
+  }, snapToken: string, redirectUrl: string) => void;
 };
 
 const ACCEPTED_MIME_TYPES = [
@@ -55,7 +64,7 @@ const getServiceById = async (id: string) => {
   return response.data;
 };
 
-const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
+const CheckoutForm = ({ onTransactionCreated }: CheckoutFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -196,17 +205,14 @@ const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
           "Content-Type": "multipart/form-data",
         },
       });
+      const {transaction, snapToken, redirectUrl} = res.data;
+      onTransactionCreated(transaction, snapToken, redirectUrl);
 
-      const snapToken = res.data.snapToken;
-      onPaymentReady(snapToken);
-
-      // Reset form dan semua state terkait file
       form.reset();
       setUploadedFile(null);
       setTotalPrice(0);
       setBasePrice(0);
 
-      // Reset hidden file input juga
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -214,13 +220,12 @@ const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
       console.error("Upload error:", err);
     } finally {
       setIsLoading(false);
-      AlertModal();
     }
   });
 
   if (!service) return <p>Loading service...</p>;
   return (
-    <div className="w-full lg:w-1/2 p-5 border-3 bg-white border-emerald-400 rounded-lg shadow-md">
+    <div className="w-full lg:w-1/2 p-5 md:border-3 md:bg-white md:border-emerald-400 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-center mb-4">Checkout Form</h2>
       <p className="text-center text-gray-600 mb-6">
         Please fill out the form below to complete your checkout.
@@ -374,7 +379,7 @@ const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
           </p>
         )}
 
-        <div className="mt-2 w-full flex md:flex-row flex-col gap-10">
+        <div className="w-full flex md:flex-row flex-col gap-10">
           <div className="">
             <label htmlFor="pageQuantity" className="mt-4 block font-semibold">
               Halaman:
@@ -439,7 +444,7 @@ const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
           </p>
         )}
         <div className="mt-4 w-full flex justify-between">
-          <h3 className="font-semibold">Harga Perlembar</h3>
+          <h3 className="font-semibold">Harga Perlembar :</h3>
           <p className="text-lg">
             {basePrice > 0 ? `Rp.${basePrice.toLocaleString()},00` : "Rp.0,00"}
           </p>
@@ -456,7 +461,7 @@ const CheckoutForm = ({ onPaymentReady }: CheckoutFormProps) => {
           type="submit"
           className="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-lg font-medium transition-colors"
         >
-          {isLoading ? "Processing..." : "Checkout"}
+          {isLoading ? <Loading /> : "Checkout"}
         </button>
       </form>
     </div>

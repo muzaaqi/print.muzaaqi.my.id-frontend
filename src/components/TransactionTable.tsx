@@ -56,23 +56,23 @@ const TransactionTable = () => {
       const res = await AxiosInstance.get(`/transaction/${id}/download`);
       const signedUrl = res.data.url;
 
-      // Dapatkan nama file dari URL (key di database)
+      
       const filename = signedUrl.split("?")[0].split("/").pop() || "file";
 
-      // Fetch file sebagai blob
+      
       const fileRes = await fetch(signedUrl);
       const blob = await fileRes.blob();
 
-      // Buat link download manual
+      
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = filename; // Gunakan nama asli file
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // Bersihkan blob URL setelah selesai
+      
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error("❌ Download error:", err);
@@ -88,7 +88,14 @@ const TransactionTable = () => {
       <p className="text-center text-gray-600 mb-6">
         View and manage all print transactions
       </p>
-
+      <div>
+        <select name="" id="" className="mb-4 p-2 border-2 border-emerald-400 shadow-sm rounded-lg">
+          <option value="">All Transactions</option>
+          <option value="completed">Completed</option>
+          <option value="processing">Processing</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
       <div className="overflow-auto rounded-lg">
         <table className="min-w-full divide-y ">
           <thead className="bg-emerald-500">
